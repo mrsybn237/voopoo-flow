@@ -1,4 +1,5 @@
 import { createClient } from "../../lib/supabase-server";
+import DashboardShell from "../../components/DashboardShell";
 import ContentForm from "../../components/ContentForm";
 
 export default async function EditContentPage({ params }) {
@@ -7,5 +8,9 @@ export default async function EditContentPage({ params }) {
 
   const { data } = await supabase.from("content_plan").select("*").eq("id", id).maybeSingle();
 
-  return <ContentForm initialData={data} />;
+  return (
+    <DashboardShell>
+      <ContentForm initialData={data} />
+    </DashboardShell>
+  );
 }

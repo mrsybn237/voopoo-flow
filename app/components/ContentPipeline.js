@@ -15,6 +15,53 @@ const PILAR_COLOR = {
   Product: "var(--color-ember)",
 };
 
+function JenisIcon({ jenis, className }) {
+  switch (jenis) {
+    case "Reels":
+    case "Video":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <rect x="3" y="5" width="14" height="14" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M17 9.5L21 7v10l-4-2.5" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        </svg>
+      );
+    case "Carousel":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <rect x="2" y="5" width="13" height="14" rx="2.2" stroke="currentColor" strokeWidth="1.6" />
+          <rect x="17" y="8" width="6" height="8" rx="1.6" stroke="currentColor" strokeWidth="1.4" opacity="0.55" />
+        </svg>
+      );
+    case "Story":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <rect x="6" y="3" width="12" height="18" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+          <circle cx="12" cy="6.3" r="0.9" fill="currentColor" />
+        </svg>
+      );
+    case "Live":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
+          <circle cx="12" cy="12" r="3.2" fill="currentColor" />
+        </svg>
+      );
+    case "Single Post":
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+          <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.4" />
+        </svg>
+      );
+    default:
+      return (
+        <svg viewBox="0 0 24 24" fill="none" className={className}>
+          <rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+        </svg>
+      );
+  }
+}
+
 export default function ContentPipeline({ content }) {
   const [search, setSearch] = useState("");
   const [pilarFilter, setPilarFilter] = useState("Semua");
@@ -44,7 +91,7 @@ export default function ContentPipeline({ content }) {
           <div className="font-mono text-[11px] text-muted-dim">{filtered.length} konten</div>
           <Link
             href="/tambah"
-            className="bg-ember text-void font-semibold rounded-lg px-3 py-1.5 text-[12px]"
+            className="bg-ember text-void font-semibold rounded-lg px-3 py-1.5 text-[12px] hover:glow-ember transition-shadow"
           >
             + Tambah
           </Link>
@@ -93,31 +140,51 @@ export default function ContentPipeline({ content }) {
                   <div className="text-[12px] text-muted-dim py-3 text-center">Kosong</div>
                 )}
                 {items.map((c) => (
-                  <Link
-                    href={`/tambah/${c.id}`}
-                    key={c.id}
-                    className="block bg-panel-raised border border-line-soft rounded-lg p-3 hover:border-ember transition-colors"
-                  >
-                    <div className="text-[13px] text-text leading-snug mb-2">{c.judul}</div>
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <span
-                        className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                        style={{ background: PILAR_COLOR[c.pilar] || "var(--color-muted)" }}
-                      />
-                      <span className="font-mono text-[10.5px] text-muted-dim">{c.pilar || "-"}</span>
+                  <div key={c.id} className="relative group">
+                    <Link
+                      href={`/tambah/${c.id}`}
+                      className="block bg-panel-raised border border-line-soft rounded-lg p-3 transition-all duration-200 hover:border-ember hover:-translate-y-0.5 hover:glow-ember"
+                    >
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <div className="text-[13px] text-text leading-snug">{c.judul}</div>
+                        <span className="flex items-center gap-1 flex-shrink-0 bg-ember-dim text-ember rounded px-1.5 py-0.5">
+                          <JenisIcon jenis={c.jenis_konten} className="w-3 h-3" />
+                          <span className="font-mono text-[9.5px]">{c.jenis_konten || "-"}</span>
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <span
+                          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                          style={{ background: PILAR_COLOR[c.pilar] || "var(--color-muted)" }}
+                        />
+                        <span className="font-mono text-[10.5px] text-muted-dim">{c.pilar || "-"}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10.5px] text-muted">{c.platform || "-"}</span>
+                        <span className="font-mono text-[10.5px] text-muted-dim">
+                          {c.tanggal_posting
+                            ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", {
+                                day: "numeric",
+                                month: "short",
+                              })
+                            : "-"}
+                        </span>
+                      </div>
+                    </Link>
+
+                    <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 z-20 opacity-0 scale-95 origin-top transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto">
+                      <div className="bg-panel-raised border border-ember/40 glow-ember rounded-xl p-3.5 animate-float-in">
+                        <div className="text-[12.5px] text-text font-medium mb-1.5">{c.judul}</div>
+                        <div className="text-[11.5px] text-muted line-clamp-3 mb-2">
+                          {c.brief || "Belum ada brief."}
+                        </div>
+                        <div className="flex items-center justify-between font-mono text-[10.5px]">
+                          <span className="text-ember">{(c.views || 0).toLocaleString("id-ID")} views</span>
+                          <span className="text-muted-dim">{c.pic || "-"}</span>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10.5px] text-muted">{c.platform || "-"}</span>
-                      <span className="font-mono text-[10.5px] text-muted-dim">
-                        {c.tanggal_posting
-                          ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", {
-                              day: "numeric",
-                              month: "short",
-                            })
-                          : "-"}
-                      </span>
-                    </div>
-                  </Link>
+                  </div>
                 ))}
               </div>
             </div>

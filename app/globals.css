@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-void: #0B0D10;
-  --color-panel: #14171B;
-  --color-panel-raised: #181C21;
+  --color-void: #05070A;
+  --color-panel: #0F1216;
+  --color-panel-raised: #151A20;
   --color-line: #262A30;
   --color-line-soft: #1D2126;
   --color-ember: #FFC94A;
   --color-ember-dim: #FFC94A26;
+  --color-ember-glow: #FFC94A55;
   --color-vapor: #9FB4C7;
   --color-vapor-dim: #9FB4C722;
+  --color-vapor-glow: #9FB4C755;
   --color-text: #EDEFF2;
   --color-muted: #7C8590;
   --color-muted-dim: #4B525C;
@@ -24,6 +26,12 @@ html, body {
   color: var(--color-text);
 }
 
+body {
+  background-image: radial-gradient(circle at 1px 1px, rgba(159, 180, 199, 0.08) 1px, transparent 0);
+  background-size: 28px 28px;
+  background-attachment: fixed;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -31,4 +39,31 @@ html, body {
 :focus-visible {
   outline: 2px solid var(--color-ember);
   outline-offset: 2px;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.12); }
+}
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(4px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-float-in {
+  animation: float-in 0.15s ease-out;
+}
+
+.pulse-dot {
+  animation: pulse-glow 2.2s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.glow-ember {
+  box-shadow: 0 0 0 1px var(--color-ember-glow), 0 0 22px -6px var(--color-ember-glow);
+}
+
+.glow-vapor {
+  box-shadow: 0 0 0 1px var(--color-vapor-glow), 0 0 22px -6px var(--color-vapor-glow);
 }
