@@ -49,13 +49,13 @@ export default async function MeetingPage({ searchParams }) {
         <div className="flex items-baseline justify-between mb-2">
           <div className="font-display text-xl font-semibold text-text">Ringkasan Meeting</div>
           <div className="flex gap-2">
-            
+            <a
               href="/meeting?range=week"
               className={`text-[12.5px] px-3 py-1.5 rounded-lg border transition-colors ${range === "week" ? "border-ember text-ember glow-ember" : "border-line text-muted hover:text-text"}`}
             >
               Mingguan
             </a>
-            
+            <a
               href="/meeting?range=month"
               className={`text-[12.5px] px-3 py-1.5 rounded-lg border transition-colors ${range === "month" ? "border-ember text-ember glow-ember" : "border-line text-muted hover:text-text"}`}
             >
