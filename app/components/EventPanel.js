@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function hitungSelisihHari(tanggalISO) {
   const target = new Date(tanggalISO + "T00:00:00");
   const today = new Date();
@@ -10,7 +12,15 @@ export default function EventPanel({ events }) {
     <div className="bg-panel border border-line-soft rounded-[10px] p-5 hover:border-line transition-colors">
       <div className="flex items-baseline justify-between mb-4">
         <div className="font-display text-sm font-semibold">Event</div>
-        <div className="font-mono text-[11px] text-muted-dim">{events.length} event</div>
+        <div className="flex items-center gap-3">
+          <div className="font-mono text-[11px] text-muted-dim">{events.length} event</div>
+          <Link
+            href="/kelola-event/baru"
+            className="bg-ember-dim text-ember font-medium rounded-full px-2.5 py-1 text-[11px] hover:glow-ember transition-shadow"
+          >
+            + Tambah
+          </Link>
+        </div>
       </div>
 
       {events.length === 0 && (
@@ -36,7 +46,8 @@ export default function EventPanel({ events }) {
           }
 
           return (
-            <div
+            <Link
+              href={`/kelola-event/${ev.id}`}
               key={ev.id}
               className={`relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
                 isActive
@@ -63,7 +74,7 @@ export default function EventPanel({ events }) {
               >
                 {statusLabel}
               </span>
-            </div>
+            </Link>
           );
         })}
       </div>
