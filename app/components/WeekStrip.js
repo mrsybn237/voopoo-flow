@@ -1,5 +1,3 @@
-import { toISODate } from "../lib/dateUtils";
-
 const HARI_SINGKAT = ["MIN", "SEN", "SEL", "RAB", "KAM", "JUM", "SAB"];
 
 export default function WeekStrip({ weekContent, monday, todayISO }) {
@@ -8,7 +6,7 @@ export default function WeekStrip({ weekContent, monday, todayISO }) {
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
-    const iso = toISODate(d);
+    const iso = d.toISOString().slice(0, 10);
     const count = weekContent.filter((c) => c.tanggal_posting === iso).length;
     return { date: d, iso, count, isToday: iso === todayISO };
   });
@@ -25,20 +23,17 @@ export default function WeekStrip({ weekContent, monday, todayISO }) {
         {days.map((day) => (
           <div
             key={day.iso}
-            className={`flex-1 flex flex-col items-center gap-2 py-2.5 px-1 rounded-lg ${
-              day.isToday ? "bg-ember-dim border border-ember" : ""
+            className={`flex-1 flex flex-col items-center gap-2 py-2.5 px-1 rounded-lg transition-all duration-200 ${
+              day.isToday ? "bg-ember-dim border border-ember glow-ember" : "border border-transparent hover:border-line-soft hover:bg-panel-raised"
             }`}
           >
-            <div className="text-[10.5px] text-muted font-mono">{HARI_SINGKAT[day.date.getDay()]}</div>
+            <div className={`text-[10.5px] font-mono ${day.isToday ? "text-ember" : "text-muted"}`}>{HARI_SINGKAT[day.date.getDay()]}</div>
             <div className="text-sm font-semibold font-display">{day.date.getDate()}</div>
             <div className="flex gap-0.5 items-end h-5">
               {Array.from({ length: Math.min(day.count, 4) }).map((_, i) => (
-                <span
-                  key={i}
-                  className={`w-[3px] rounded-sm ${day.isToday ? "bg-ember" : "bg-vapor"}`}
-                  style={{ height: `${8 + i * 4}px` }}
-                />
+                <span key={i} className={`w-[3px] rounded-sm ${day.isToday ? "bg-ember" : "bg-vapor"}`} style={{ height: `${8 + i * 4}px` }} />
               ))}
+              {day.count === 0 && <span className="w-[3px] h-1 rounded-sm bg-line-soft" />}
             </div>
           </div>
         ))}

@@ -17,42 +17,56 @@ export default function EventPanel({ events }) {
         <div className="text-[13px] text-muted-dim py-4">Belum ada event terjadwal.</div>
       )}
 
-      {events.map((ev) => {
-        const mulaiDiff = hitungSelisihHari(ev.tanggal_mulai);
-        const selesaiDiff = hitungSelisihHari(ev.tanggal_selesai);
-        let statusLabel;
-        let isActive = false;
+      <div className="flex flex-col gap-2.5">
+        {events.map((ev) => {
+          const mulaiDiff = hitungSelisihHari(ev.tanggal_mulai);
+          const selesaiDiff = hitungSelisihHari(ev.tanggal_selesai);
+          let statusLabel;
+          let isActive = false;
+          let isSoon = false;
 
-        if (mulaiDiff > 0) {
-          statusLabel = `H-${mulaiDiff}`;
-        } else if (selesaiDiff >= 0) {
-          statusLabel = "Berlangsung";
-          isActive = true;
-        } else {
-          statusLabel = "Selesai";
-        }
+          if (mulaiDiff > 0) {
+            statusLabel = `H-${mulaiDiff}`;
+            isSoon = mulaiDiff <= 7;
+          } else if (selesaiDiff >= 0) {
+            statusLabel = "Berlangsung";
+            isActive = true;
+          } else {
+            statusLabel = "Selesai";
+          }
 
-        return (
-          <div
-            key={ev.id}
-            className={`flex items-start justify-between gap-3 py-2.5 border-b border-line-soft last:border-none ${
-              isActive ? "bg-ember-dim -mx-2 px-2 rounded-lg" : ""
-            }`}
-          >
-            <div className="min-w-0">
-              <div className="text-[13.5px] text-text truncate">{ev.nama_event}</div>
-              <div className="text-[11.5px] text-muted mt-0.5">{ev.lokasi || "-"}</div>
-            </div>
-            <span
-              className={`font-mono text-[11px] flex-shrink-0 ${
-                isActive ? "text-ember" : mulaiDiff > 0 && mulaiDiff <= 7 ? "text-ember" : "text-muted-dim"
+          return (
+            <div
+              key={ev.id}
+              className={`relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-200 ${
+                isActive
+                  ? "bg-ember-dim border-ember glow-ember"
+                  : "bg-panel-raised border-line-soft hover:border-ember/40 hover:-translate-y-0.5"
               }`}
             >
-              {statusLabel}
-            </span>
-          </div>
-        );
-      })}
+              <div
+                className={`w-1.5 self-stretch rounded-full flex-shrink-0 ${
+                  isActive ? "bg-ember" : isSoon ? "bg-ember/60" : "bg-muted-dim"
+                }`}
+              />
+              <div className="min-w-0 flex-1">
+                <div className="text-[13.5px] text-text truncate flex items-center gap-2">
+                  {ev.nama_event}
+                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-ember pulse-dot flex-shrink-0" />}
+                </div>
+                <div className="text-[11.5px] text-muted mt-0.5">{ev.lokasi || "-"}</div>
+              </div>
+              <span
+                className={`font-mono text-[11px] flex-shrink-0 px-2 py-1 rounded-full ${
+                  isActive ? "text-ember" : isSoon ? "text-ember bg-ember-dim" : "text-muted-dim"
+                }`}
+              >
+                {statusLabel}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

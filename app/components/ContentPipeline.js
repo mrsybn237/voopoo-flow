@@ -5,6 +5,16 @@ import Link from "next/link";
 
 const STATUS_KOLOM = ["Brief", "Produksi", "Review", "Posting"];
 
+const PILAR_GRADIENT = {
+  Education: "from-vapor/35 to-transparent",
+  Entertainment: "from-ember/35 to-transparent",
+  Lifestyle: "from-vapor/35 to-transparent",
+  Community: "from-muted/35 to-transparent",
+  Promotional: "from-ember/35 to-transparent",
+  Agile: "from-muted/35 to-transparent",
+  Product: "from-ember/35 to-transparent",
+};
+
 const PILAR_COLOR = {
   Education: "var(--color-vapor)",
   Entertainment: "var(--color-ember)",
@@ -14,6 +24,31 @@ const PILAR_COLOR = {
   Agile: "var(--color-muted)",
   Product: "var(--color-ember)",
 };
+
+const PLATFORM_ICON = {
+  "IG @voopoo_indonesia": "camera",
+  "IG @voopoo_daily": "camera",
+  "TikTok @voopoo_indonesia": "note",
+};
+
+function PlatformIcon({ platform, className }) {
+  const type = PLATFORM_ICON[platform];
+  if (type === "note") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" className={className}>
+        <path d="M15 4v10.5a3.5 3.5 0 11-2.5-3.36V4h2.5z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M15 4c.3 2 1.8 3.4 4 3.6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="3.5" y="5" width="17" height="14" rx="3" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="12" cy="12" r="3.4" stroke="currentColor" strokeWidth="1.6" />
+      <circle cx="16.6" cy="8" r="0.9" fill="currentColor" />
+    </svg>
+  );
+}
 
 function JenisIcon({ jenis, className }) {
   switch (jenis) {
@@ -62,6 +97,16 @@ function JenisIcon({ jenis, className }) {
   }
 }
 
+function initials(name) {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+}
+
 export default function ContentPipeline({ content }) {
   const [search, setSearch] = useState("");
   const [pilarFilter, setPilarFilter] = useState("Semua");
@@ -72,7 +117,7 @@ export default function ContentPipeline({ content }) {
     [content]
   );
   const platformOptions = useMemo(
-    () => ["Semua", ...new Set(content.map((c) => c.platform).filter(Boolean))],
+    () => [...new Set(content.map((c) => c.platform).filter(Boolean))],
     [content]
   );
 
@@ -82,6 +127,8 @@ export default function ContentPipeline({ content }) {
     const matchPlatform = platformFilter === "Semua" || c.platform === platformFilter;
     return matchSearch && matchPilar && matchPlatform;
   });
+
+  const maxViews = Math.max(1, ...filtered.map((c) => c.views || 0));
 
   return (
     <div className="mt-8">
@@ -98,32 +145,53 @@ export default function ContentPipeline({ content }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2.5 mb-5">
-        <input
-          type="text"
-          placeholder="Cari judul konten..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="bg-panel border border-line rounded-lg px-3 py-2 text-[13px] text-text placeholder:text-muted-dim flex-1 min-w-[180px] focus:border-ember outline-none"
-        />
+      <div className="flex flex-wrap items-center gap-2.5 mb-5">
+        <div className="relative flex-1 min-w-[180px]">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-dim">
+            <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
+            <path d="M20 20l-4.5-4.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Cari judul konten..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-panel border border-line rounded-full pl-9 pr-3 py-2 text-[13px] text-text placeholder:text-muted-dim focus:border-ember outline-none transition-colors"
+          />
+        </div>
+
         <select
           value={pilarFilter}
           onChange={(e) => setPilarFilter(e.target.value)}
-          className="bg-panel border border-line rounded-lg px-3 py-2 text-[13px] text-muted"
+          className="bg-panel border border-line rounded-full px-3.5 py-2 text-[12.5px] text-muted hover:border-ember/50 transition-colors"
         >
           {pilarOptions.map((p) => (
             <option key={p} value={p}>{p === "Semua" ? "Semua Pilar" : p}</option>
           ))}
         </select>
-        <select
-          value={platformFilter}
-          onChange={(e) => setPlatformFilter(e.target.value)}
-          className="bg-panel border border-line rounded-lg px-3 py-2 text-[13px] text-muted"
-        >
+
+        <div className="flex items-center gap-1.5 bg-panel border border-line rounded-full p-1">
+          <button
+            onClick={() => setPlatformFilter("Semua")}
+            className={`px-3 py-1.5 rounded-full text-[11.5px] font-mono transition-colors ${
+              platformFilter === "Semua" ? "bg-ember-dim text-ember" : "text-muted-dim hover:text-text"
+            }`}
+          >
+            Semua
+          </button>
           {platformOptions.map((p) => (
-            <option key={p} value={p}>{p === "Semua" ? "Semua Platform" : p}</option>
+            <button
+              key={p}
+              onClick={() => setPlatformFilter(p)}
+              title={p}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                platformFilter === p ? "bg-ember-dim text-ember" : "text-muted-dim hover:text-text"
+              }`}
+            >
+              <PlatformIcon platform={p} className="w-4 h-4" />
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -135,57 +203,89 @@ export default function ContentPipeline({ content }) {
                 <div className="font-display text-[13px] font-semibold text-muted">{status}</div>
                 <div className="font-mono text-[11px] text-muted-dim">{items.length}</div>
               </div>
-              <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col gap-3">
                 {items.length === 0 && (
                   <div className="text-[12px] text-muted-dim py-3 text-center">Kosong</div>
                 )}
-                {items.map((c) => (
-                  <div key={c.id} className="relative group">
-                    <Link
-                      href={`/tambah/${c.id}`}
-                      className="block bg-panel-raised border border-line-soft rounded-lg p-3 transition-all duration-200 hover:border-ember hover:-translate-y-0.5 hover:glow-ember"
-                    >
-                      <div className="flex items-start justify-between gap-2 mb-2">
-                        <div className="text-[13px] text-text leading-snug">{c.judul}</div>
-                        <span className="flex items-center gap-1 flex-shrink-0 bg-ember-dim text-ember rounded px-1.5 py-0.5">
-                          <JenisIcon jenis={c.jenis_konten} className="w-3 h-3" />
-                          <span className="font-mono text-[9.5px]">{c.jenis_konten || "-"}</span>
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-1.5 mb-1.5">
-                        <span
-                          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                          style={{ background: PILAR_COLOR[c.pilar] || "var(--color-muted)" }}
-                        />
-                        <span className="font-mono text-[10.5px] text-muted-dim">{c.pilar || "-"}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10.5px] text-muted">{c.platform || "-"}</span>
-                        <span className="font-mono text-[10.5px] text-muted-dim">
-                          {c.tanggal_posting
-                            ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", {
-                                day: "numeric",
-                                month: "short",
-                              })
-                            : "-"}
-                        </span>
-                      </div>
-                    </Link>
-
-                    <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 z-20 opacity-0 scale-95 origin-top transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto">
-                      <div className="bg-panel-raised border border-ember/40 glow-ember rounded-xl p-3.5 animate-float-in">
-                        <div className="text-[12.5px] text-text font-medium mb-1.5">{c.judul}</div>
-                        <div className="text-[11.5px] text-muted line-clamp-3 mb-2">
-                          {c.brief || "Belum ada brief."}
+                {items.map((c) => {
+                  const pct = Math.round(((c.views || 0) / maxViews) * 100);
+                  return (
+                    <div key={c.id} className="relative group">
+                      <Link
+                        href={`/tambah/${c.id}`}
+                        className="block bg-panel-raised border border-line-soft rounded-xl overflow-hidden transition-all duration-200 hover:border-ember hover:-translate-y-0.5 hover:glow-ember"
+                      >
+                        <div
+                          className={`relative h-[64px] bg-gradient-to-br ${PILAR_GRADIENT[c.pilar] || "from-muted/30 to-transparent"} flex items-center justify-center overflow-hidden`}
+                        >
+                          <JenisIcon jenis={c.jenis_konten} className="w-9 h-9 text-text/10 absolute" />
+                          <span className="absolute top-2 right-2 flex items-center gap-1 bg-void/70 backdrop-blur-sm text-ember rounded-md px-1.5 py-0.5">
+                            <JenisIcon jenis={c.jenis_konten} className="w-3 h-3" />
+                            <span className="font-mono text-[9.5px]">{c.jenis_konten || "-"}</span>
+                          </span>
+                          <div className="absolute -bottom-3.5 left-2.5 w-7 h-7 rounded-full bg-panel border-2 border-panel-raised flex items-center justify-center">
+                            <span className="font-mono text-[9.5px] text-ember font-semibold">{initials(c.pic)}</span>
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between font-mono text-[10.5px]">
-                          <span className="text-ember">{(c.views || 0).toLocaleString("id-ID")} views</span>
-                          <span className="text-muted-dim">{c.pic || "-"}</span>
+
+                        <div className="pt-4 px-3 pb-3">
+                          <div className="text-[13px] text-text leading-snug mb-1.5 line-clamp-2">{c.judul}</div>
+                          <div className="text-[10px] text-muted-dim mb-2">{c.pic || "Belum ada PIC"}</div>
+
+                          <div className="flex items-center gap-1.5 mb-1.5">
+                            <span
+                              className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                              style={{ background: PILAR_COLOR[c.pilar] || "var(--color-muted)" }}
+                            />
+                            <span className="font-mono text-[10.5px] text-muted-dim">{c.pilar || "-"}</span>
+                          </div>
+
+                          <div className="flex items-center justify-between mb-2.5">
+                            <span className="flex items-center gap-1 text-[10.5px] text-muted">
+                              <PlatformIcon platform={c.platform} className="w-3 h-3" />
+                              {c.platform?.split(" ")[0] || "-"}
+                            </span>
+                            <span className="flex items-center gap-1 font-mono text-[10.5px] text-muted-dim">
+                              <svg viewBox="0 0 24 24" width="11" height="11" fill="none">
+                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="currentColor" strokeWidth="1.6" />
+                                <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+                              </svg>
+                              {(c.views || 0).toLocaleString("id-ID")}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[9.5px] text-muted-dim">Performa relatif</span>
+                            <span className="font-mono text-[9.5px] text-ember">{pct}%</span>
+                          </div>
+                          <div className="h-1 bg-line-soft rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-ember rounded-full transition-all duration-500"
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      </Link>
+
+                      <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 z-20 opacity-0 scale-95 origin-top transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto">
+                        <div className="bg-panel-raised border border-ember/40 glow-ember rounded-xl p-3.5 animate-float-in">
+                          <div className="text-[12.5px] text-text font-medium mb-1.5">{c.judul}</div>
+                          <div className="text-[11.5px] text-muted line-clamp-3 mb-2">
+                            {c.brief || "Belum ada brief."}
+                          </div>
+                          <div className="flex items-center justify-between font-mono text-[10.5px]">
+                            <span className="text-ember">{(c.views || 0).toLocaleString("id-ID")} views</span>
+                            <span className="text-muted-dim">
+                              {c.tanggal_posting
+                                ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", { day: "numeric", month: "short" })
+                                : "-"}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );

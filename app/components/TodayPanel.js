@@ -8,20 +8,27 @@ const PILAR_COLOR = {
   Product: "var(--color-ember)",
 };
 
+function TypeIcon({ isTalent, className }) {
+  if (isTalent) {
+    return (
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" className={className}>
+        <circle cx="12" cy="8" r="3.2" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M5 20c0-3.5 3-6 7-6s7 2.5 7 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" className={className}>
+      <rect x="4" y="4" width="16" height="16" rx="2.5" stroke="currentColor" strokeWidth="1.6" />
+      <path d="M8 9h8M8 13h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 export default function TodayPanel({ content, talent }) {
   const items = [
-    ...content.map((c) => ({
-      id: `c-${c.id}`,
-      title: c.judul,
-      sub: c.pilar,
-      time: c.status,
-    })),
-    ...talent.map((t) => ({
-      id: `t-${t.id}`,
-      title: `Deadline brief — ${t.nama_talent}`,
-      sub: t.platform,
-      time: "Talent",
-    })),
+    ...content.map((c) => ({ id: `c-${c.id}`, title: c.judul, sub: c.pilar, time: c.status, isTalent: false })),
+    ...talent.map((t) => ({ id: `t-${t.id}`, title: `Deadline brief — ${t.nama_talent}`, sub: t.platform, time: "Talent", isTalent: true })),
   ];
 
   return (
@@ -37,21 +44,28 @@ export default function TodayPanel({ content, talent }) {
         <div className="text-[13px] text-muted-dim py-4">Gak ada konten atau deadline hari ini.</div>
       )}
 
-      {items.map((item) => (
-        <div key={item.id} className="flex items-start gap-3 py-2.5 border-b border-line-soft last:border-none">
-          <div className="w-4 h-4 rounded border-[1.5px] border-muted-dim mt-0.5 flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <div className="text-[13.5px] text-text">{item.title}</div>
-            <div className="flex items-center gap-2 mt-1">
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: PILAR_COLOR[item.sub] || "var(--color-muted)" }}
-              />
-              <span className="font-mono text-[11px] text-muted-dim">{item.time}</span>
+      <div className="flex flex-col gap-1.5">
+        {items.map((item) => (
+          <div key={item.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-panel-raised transition-colors">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+              style={{
+                background: item.isTalent ? "var(--color-vapor-dim)" : "var(--color-ember-dim)",
+                color: item.isTalent ? "var(--color-vapor)" : "var(--color-ember)",
+              }}
+            >
+              <TypeIcon isTalent={item.isTalent} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[13.5px] text-text truncate">{item.title}</div>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: PILAR_COLOR[item.sub] || "var(--color-muted)" }} />
+                <span className="font-mono text-[11px] text-muted-dim">{item.time}</span>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

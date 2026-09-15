@@ -18,7 +18,7 @@ function formatRibu(val) {
 function CustomTooltip({ active, payload, label }) {
   if (!active || !payload || payload.length === 0) return null;
   return (
-    <div className="bg-panel-raised border border-line rounded-lg px-3 py-2 text-[12px]">
+    <div className="bg-panel border border-line-soft rounded-[10px] p-5 mt-4 hover:border-line hover:glow-vapor transition-all duration-300">
       <div className="text-muted font-mono mb-1">{label}</div>
       {payload.map((p) => (
         <div key={p.dataKey} style={{ color: p.color }}>
