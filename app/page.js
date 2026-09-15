@@ -21,6 +21,7 @@ function getMonday(d) {
 
 export default async function Home() {
   const supabase = await createClient();
+
   const today = new Date();
   const todayISO = toISODate(today);
 
@@ -122,14 +123,11 @@ export default async function Home() {
 
   const searchItems = [
     { id: "nav-home", type: "Halaman", label: "Dashboard Utama", href: "/" },
-    { id: "nav-tambah", type: "Halaman", label: "Tambah Konten Baru", href: "/tambah" },
-    { id: "nav-meeting", type: "Halaman", label: "Ringkasan Meeting", href: "/meeting" },
-    { id: "nav-panduan", type: "Halaman", label: "Panduan Penggunaan", href: "/panduan" },
     ...allContent.map((c) => ({
       id: `c-${c.id}`,
       type: c.pilar || "Konten",
       label: c.judul,
-      href: `/tambah/${c.id}`,
+      href: null,
     })),
     ...allTalent.map((t) => ({
       id: `t-${t.id}`,
@@ -141,7 +139,7 @@ export default async function Home() {
 
   return (
     <DashboardShell searchItems={searchItems}>
-      <div className="max-w-[1180px] mx-auto px-6 pt-7 pb-16">
+      <div className="w-full px-6 lg:px-10 xl:px-16 pb-16">
         <AchievementRing
           achievementPct={achievementPct}
           totalKonten={totalKonten}
@@ -149,7 +147,7 @@ export default async function Home() {
           todayDone={0}
           todayTotal={todayContent.length + todayTalent.length}
         />
-        <div className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] gap-5">
           <TodayPanel content={todayContent} talent={todayTalent} />
           <WeekStrip weekContent={weekContent} monday={mondayISO} todayISO={todayISO} />
           <div className="md:col-span-2">
@@ -157,7 +155,7 @@ export default async function Home() {
           </div>
         </div>
         <TrendChart data={trendData} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
           <EventPanel events={events} />
           <TalentPanel talent={allTalent} />
         </div>

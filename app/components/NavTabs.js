@@ -19,12 +19,12 @@ export default function NavTabs() {
   );
 
   return (
-    <div className="relative flex items-center gap-1 bg-panel border border-line-soft rounded-2xl p-1.5">
+    <div className="relative flex items-center gap-1.5 bg-panel border border-line-soft rounded-2xl p-2">
       <div
-        className="absolute top-1.5 bottom-1.5 rounded-xl bg-ember-dim border border-ember transition-all duration-300 ease-out"
+        className="absolute top-2 bottom-2 rounded-xl bg-ember-dim border border-ember glow-ember transition-all duration-300 ease-out"
         style={{
-          width: `calc(${100 / TABS.length}% - 6px)`,
-          left: `calc(${(activeIndex * 100) / TABS.length}% + 3px)`,
+          width: `calc(${100 / TABS.length}% - 8px)`,
+          left: `calc(${(activeIndex * 100) / TABS.length}% + 4px)`,
         }}
       />
       {TABS.map((tab, i) => {
@@ -33,7 +33,7 @@ export default function NavTabs() {
           <Link
             key={tab.href}
             href={tab.href}
-            className={`relative z-10 flex-1 text-center px-5 py-2.5 rounded-xl text-[13.5px] font-display font-medium transition-colors duration-200 ${
+            className={`relative z-10 flex-1 text-center px-6 py-3.5 rounded-xl text-[15px] font-display font-semibold transition-colors duration-200 ${
               isActive ? "text-ember" : "text-muted hover:text-text"
             }`}
           >
