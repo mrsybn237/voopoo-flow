@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 function hitungSelisihHari(tanggalISO) {
   const target = new Date(tanggalISO + "T00:00:00");
   const today = new Date();
@@ -10,7 +12,15 @@ export default function TalentPanel({ talent }) {
     <div className="bg-panel border border-line-soft rounded-[10px] p-5 hover:border-line transition-colors">
       <div className="flex items-baseline justify-between mb-4">
         <div className="font-display text-sm font-semibold">Talent Collab</div>
-        <div className="font-mono text-[11px] text-muted-dim">{talent.length} talent</div>
+        <div className="flex items-center gap-3">
+          <div className="font-mono text-[11px] text-muted-dim">{talent.length} talent</div>
+          <Link
+            href="/kelola-talent/baru"
+            className="bg-ember-dim text-ember font-medium rounded-lg px-2.5 py-1 text-[11px] hover:glow-ember transition-shadow"
+          >
+            + Tambah
+          </Link>
+        </div>
       </div>
 
       {talent.length === 0 && (
@@ -37,7 +47,11 @@ export default function TalentPanel({ talent }) {
         }
 
         return (
-          <div key={t.id} className="flex items-center justify-between gap-3 py-2.5 border-b border-line-soft last:border-none">
+          <Link
+            href={`/kelola-talent/${t.id}`}
+            key={t.id}
+            className="flex items-center justify-between gap-3 py-2.5 border-b border-line-soft last:border-none hover:bg-panel-raised -mx-2 px-2 rounded-lg transition-colors"
+          >
             <div className="min-w-0">
               <div className="text-[13.5px] text-text truncate">{t.nama_talent}</div>
               <div className="flex items-center gap-2 mt-1">
@@ -47,7 +61,7 @@ export default function TalentPanel({ talent }) {
               </div>
             </div>
             <span className={`font-mono text-[11px] flex-shrink-0 ${deadlineColor}`}>{deadlineLabel}</span>
-          </div>
+          </Link>
         );
       })}
     </div>
