@@ -16,6 +16,7 @@ const KELOLA_LINKS = [
   { href: "/kelola-event", label: "Event" },
   { href: "/kelola-lokasi", label: "Lokasi Shooting" },
   { href: "/kelola-jadwal-talent", label: "Jadwal Talent" },
+  { href: "/kelola-pembiayaan", label: "Pembiayaan" },
 ];
 
 export default function NavTabs() {

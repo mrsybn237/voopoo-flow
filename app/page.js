@@ -9,6 +9,7 @@ import ContentPipeline from "./components/ContentPipeline";
 import TrendChart from "./components/TrendChart";
 import EventPanel from "./components/EventPanel";
 import TalentPanel from "./components/TalentPanel";
+import CalendarView from "./components/CalendarView";
 
 function getMonday(d) {
   const date = new Date(d);
@@ -160,7 +161,7 @@ export default async function Home() {
           <TalentPanel talent={allTalent} />
         </div>
         <ContentPipeline content={allContent} />
-        import CalendarView from "./components/CalendarView";
+        <CalendarView />
       </div>
     </DashboardShell>
   );
