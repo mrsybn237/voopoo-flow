@@ -160,6 +160,7 @@ export default async function Home() {
           <TalentPanel talent={allTalent} />
         </div>
         <ContentPipeline content={allContent} />
+        import CalendarView from "./components/CalendarView";
       </div>
     </DashboardShell>
   );

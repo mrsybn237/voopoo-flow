@@ -1,28 +1,28 @@
 import { createClient } from "../../lib/supabase-server";
 import DashboardShell from "../../components/DashboardShell";
-import EventForm from "../../components/EventForm";
+import PembiayaanForm from "../../components/PembiayaanForm";
 
-export default async function EditEventPage({ params }) {
+export default async function EditPembiayaanPage({ params }) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: event, error } = await supabase.from("events").select("*").eq("id", id).maybeSingle();
+  const { data: item, error } = await supabase.from("pembiayaan").select("*").eq("id", id).maybeSingle();
 
   if (error) {
     return (
       <DashboardShell>
         <div className="bg-panel border border-line-soft rounded-[10px] p-5 text-ember text-[13px]">
-          Gagal memuat event: {error.message}
+          Gagal memuat data: {error.message}
         </div>
       </DashboardShell>
     );
   }
 
-  if (!event) {
+  if (!item) {
     return (
       <DashboardShell>
         <div className="bg-panel border border-line-soft rounded-[10px] p-5 text-muted text-[13px]">
-          Event tidak ditemukan (ID: {id}).
+          Data tidak ditemukan (ID: {id}).
         </div>
       </DashboardShell>
     );
@@ -30,7 +30,7 @@ export default async function EditEventPage({ params }) {
 
   return (
     <DashboardShell>
-      <EventForm initialData={event} />
+      <PembiayaanForm initialData={item} />
     </DashboardShell>
   );
 }

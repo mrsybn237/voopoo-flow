@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../lib/supabase-browser";
 
@@ -16,6 +16,8 @@ export default function ContentForm({ initialData = null }) {
   const supabase = createClient();
   const isEdit = !!initialData;
 
+  const [lokasiList, setLokasiList] = useState([]);
+
   const [form, setForm] = useState({
     judul: initialData?.judul || "",
     status: initialData?.status || "Brief",
@@ -24,6 +26,7 @@ export default function ContentForm({ initialData = null }) {
     product: initialData?.product || "Argus Matrix",
     platform: initialData?.platform || "IG @voopoo_indonesia",
     pic: initialData?.pic || "Han",
+    lokasi_shooting_id: initialData?.lokasi_shooting_id || "",
     tanggal_produksi: initialData?.tanggal_produksi || "",
     tanggal_posting: initialData?.tanggal_posting || "",
     brief: initialData?.brief || "",
@@ -33,6 +36,21 @@ export default function ContentForm({ initialData = null }) {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let aktif = true;
+    async function ambilLokasi() {
+      const { data } = await supabase
+        .from("lokasi_shooting")
+        .select("id, nama_lokasi")
+        .order("nama_lokasi", { ascending: true });
+      if (aktif) setLokasiList(data || []);
+    }
+    ambilLokasi();
+    return () => {
+      aktif = false;
+    };
+  }, []);
 
   function update(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -48,6 +66,7 @@ export default function ContentForm({ initialData = null }) {
       views: Number(form.views) || 0,
       tanggal_produksi: form.tanggal_produksi || null,
       tanggal_posting: form.tanggal_posting || null,
+      lokasi_shooting_id: form.lokasi_shooting_id || null,
     };
 
     let result;
@@ -167,6 +186,19 @@ export default function ContentForm({ initialData = null }) {
           </Field>
         </div>
 
+        <Field label="Lokasi Shooting">
+          <select
+            value={form.lokasi_shooting_id}
+            onChange={(e) => update("lokasi_shooting_id", e.target.value)}
+            className="w-full bg-panel border border-line rounded-lg px-3 py-2.5 text-[14px] text-text"
+          >
+            <option value="">— Belum ditentukan —</option>
+            {lokasiList.map((lok) => (
+              <option key={lok.id} value={lok.id}>{lok.nama_lokasi}</option>
+            ))}
+          </select>
+        </Field>
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="Tanggal Produksi">
             <input
@@ -230,7 +262,7 @@ export default function ContentForm({ initialData = null }) {
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 bg-ember text-void font-semibold rounded-lg px-4 py-2.5 text-[14px] disabled:opacity-50"
+          className="flex-1 bg-ember text-void font-semibold rounded-lg px-4 py-2.5 text-[14px] hover:glow-ember transition-shadow disabled:opacity-50"
         >
           {saving ? "Menyimpan..." : isEdit ? "Simpan Perubahan" : "Tambah Konten"}
         </button>
