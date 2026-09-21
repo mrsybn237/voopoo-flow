@@ -68,8 +68,8 @@ export default function EventPanel({ events }) {
                 <div className="text-[11.5px] text-muted mt-0.5">{ev.lokasi || "-"}</div>
               </div>
               <span
-                className={`font-mono text-[11px] flex-shrink-0 px-2 py-1 rounded-full ${
-                  isActive ? "text-ember" : isSoon ? "text-ember bg-ember-dim" : "text-muted-dim"
+                className={`font-mono text-[12px] font-bold flex-shrink-0 px-2.5 py-1 rounded-full ${
+                  isActive ? "text-ember bg-void/40" : isSoon ? "text-ember bg-ember-dim" : "text-text bg-panel"
                 }`}
               >
                 {statusLabel}

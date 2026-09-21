@@ -42,17 +42,14 @@ export default function TalentPanel({ talent }) {
       <div className="flex flex-col gap-2">
         {talent.map((t) => {
           const diff = t.deadline ? hitungSelisihHari(t.deadline) : null;
-          let deadlineColor = "text-muted-dim";
-          let deadlineBg = "";
+          let deadlineColor = "text-text bg-panel";
           let deadlineLabel = "-";
           if (diff !== null) {
             if (diff < 0) {
-              deadlineColor = "text-ember";
-              deadlineBg = "bg-ember-dim";
+              deadlineColor = "text-ember bg-ember-dim";
               deadlineLabel = `Telat ${Math.abs(diff)} hari`;
             } else if (diff <= 3) {
-              deadlineColor = "text-ember";
-              deadlineBg = "bg-ember-dim";
+              deadlineColor = "text-ember bg-ember-dim";
               deadlineLabel = diff === 0 ? "Hari ini" : `H-${diff}`;
             } else {
               deadlineLabel = new Date(t.deadline + "T00:00:00").toLocaleDateString("id-ID", {
@@ -80,7 +77,7 @@ export default function TalentPanel({ talent }) {
                   <span className="text-[10.5px] text-muted">{t.status || "-"}</span>
                 </div>
               </div>
-              <span className={`font-mono text-[10.5px] flex-shrink-0 px-2 py-1 rounded-full ${deadlineColor} ${deadlineBg}`}>
+              <span className={`font-mono text-[11.5px] font-bold flex-shrink-0 px-2.5 py-1 rounded-full ${deadlineColor}`}>
                 {deadlineLabel}
               </span>
             </Link>

@@ -17,18 +17,22 @@ export default function WeekStrip({ weekContent, monday, todayISO }) {
     <div className="bg-panel border border-line-soft rounded-[10px] p-5 hover:border-line transition-colors">
       <div className="flex items-baseline justify-between mb-4">
         <div className="font-display text-sm font-semibold">Minggu Ini</div>
-        <div className="font-mono text-[11px] text-muted-dim">Minggu {weekNum}</div>
+        <div className="font-mono text-[12px] font-semibold text-muted">Minggu {weekNum}</div>
       </div>
       <div className="flex justify-between gap-1.5">
         {days.map((day) => (
           <div
             key={day.iso}
-            className={`flex-1 flex flex-col items-center gap-2 py-2.5 px-1 rounded-lg transition-all duration-200 ${
+            className={`flex-1 flex flex-col items-center gap-2 py-3 px-1 rounded-lg transition-all duration-200 ${
               day.isToday ? "bg-ember-dim border border-ember glow-ember" : "border border-transparent hover:border-line-soft hover:bg-panel-raised"
             }`}
           >
-            <div className={`text-[10.5px] font-mono ${day.isToday ? "text-ember" : "text-muted"}`}>{HARI_SINGKAT[day.date.getDay()]}</div>
-            <div className="text-sm font-semibold font-display">{day.date.getDate()}</div>
+            <div className={`text-[11px] font-mono font-semibold ${day.isToday ? "text-ember" : "text-muted"}`}>
+              {HARI_SINGKAT[day.date.getDay()]}
+            </div>
+            <div className={`text-lg font-bold font-display ${day.isToday ? "text-ember" : "text-text"}`}>
+              {day.date.getDate()}
+            </div>
             <div className="flex gap-0.5 items-end h-5">
               {Array.from({ length: Math.min(day.count, 4) }).map((_, i) => (
                 <span key={i} className={`w-[3px] rounded-sm ${day.isToday ? "bg-ember" : "bg-vapor"}`} style={{ height: `${8 + i * 4}px` }} />

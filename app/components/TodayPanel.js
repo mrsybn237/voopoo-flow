@@ -35,7 +35,7 @@ export default function TodayPanel({ content, talent }) {
     <div className="bg-panel border border-line-soft rounded-[10px] p-5 hover:border-line transition-colors">
       <div className="flex items-baseline justify-between mb-4">
         <div className="font-display text-sm font-semibold">Hari Ini</div>
-        <div className="font-mono text-[11px] text-muted-dim">
+        <div className="font-mono text-[12.5px] font-semibold text-text bg-panel-raised px-2.5 py-1 rounded-full">
           {new Date().toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "short" })}
         </div>
       </div>
