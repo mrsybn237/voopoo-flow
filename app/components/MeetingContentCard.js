@@ -1,23 +1,16 @@
-"use client";
-
-import { useQuickEdit } from "./QuickEditContext";
-
-export default function MeetingContentCard({ c }) {
-  const { openEdit } = useQuickEdit();
+export default function MeetingContentCard({ content }) {
+  const c = content;
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => openEdit("content", c.id)}
-      onKeyDown={(e) => e.key === "Enter" && openEdit("content", c.id)}
-      className="cursor-pointer bg-panel border border-line-soft rounded-[10px] p-4 transition-all duration-200 hover:border-ember hover:-translate-y-0.5 hover:glow-ember active:scale-[0.99]"
-    >
+    <div className="bg-panel border border-line-soft rounded-[10px] p-4 transition-all hover:border-vapor/40 hover:glow-vapor">
       <div className="flex items-start justify-between gap-3 mb-2">
         <div className="text-[14px] text-text font-medium">{c.judul}</div>
-        <span className="font-mono text-[12px] font-bold text-text bg-panel-raised px-2.5 py-1 rounded-md flex-shrink-0">
+        <span className="font-mono text-[11px] text-muted-dim flex-shrink-0">
           {c.tanggal_posting
-            ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", { day: "numeric", month: "short" })
+            ? new Date(c.tanggal_posting + "T00:00:00").toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "short",
+              })
             : "-"}
         </span>
       </div>
@@ -32,29 +25,16 @@ export default function MeetingContentCard({ c }) {
       </div>
       <div className="flex flex-wrap gap-3 text-[12px]">
         {c.link_referensi && (
-          
-            href={c.link_referensi}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="text-vapor hover:underline"
-          >
+          <a href={c.link_referensi} target="_blank" rel="noopener noreferrer" className="text-vapor hover:underline">
             Link Referensi ↗
           </a>
         )}
         {c.link_aset && (
-          
-            href={c.link_aset}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
-            className="text-vapor hover:underline"
-          >
+          <a href={c.link_aset} target="_blank" rel="noopener noreferrer" className="text-vapor hover:underline">
             Link Aset ↗
           </a>
         )}
       </div>
-      <div className="mt-2 text-[10.5px] text-muted-dim">Klik kartu buat quick edit</div>
     </div>
   );
 }

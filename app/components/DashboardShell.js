@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import Topbar from "./Topbar";
 import Sidebar from "./Sidebar";
 import CommandPalette from "./CommandPalette";
-import { QuickEditProvider } from "./QuickEditContext";
-import QuickEditDrawer from "./QuickEditDrawer";
 import { createClient } from "../lib/supabase-browser";
 
 export default function DashboardShell({ searchItems, children }) {
@@ -51,7 +49,7 @@ export default function DashboardShell({ searchItems, children }) {
   }, []);
 
   return (
-    <QuickEditProvider>
+    <>
       <Sidebar me={me} onLogout={handleLogout} />
       <div className="sm:ml-[84px]">
         <Topbar onOpenPalette={hasSearch ? () => setPaletteOpen(true) : null} me={me} />
@@ -60,7 +58,6 @@ export default function DashboardShell({ searchItems, children }) {
       {paletteOpen && hasSearch && (
         <CommandPalette items={searchItems} onClose={() => setPaletteOpen(false)} />
       )}
-      <QuickEditDrawer />
-    </QuickEditProvider>
+    </>
   );
 }
