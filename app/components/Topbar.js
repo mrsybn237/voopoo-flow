@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import LogoutButton from "./LogoutButton";
 import NavTabs from "./NavTabs";
 import Logo from "./Logo";
+import { createClient } from "../lib/supabase-browser";
 
 const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -17,10 +19,23 @@ function greetingFor(hour) {
 
 export default function Topbar({ onOpenPalette }) {
   const [now, setNow] = useState(null);
+  const [me, setMe] = useState(null);
 
   useEffect(() => {
     setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 30000);
+
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("team_members")
+        .select("nama, role, is_admin")
+        .eq("email", user.email)
+        .maybeSingle();
+      setMe(data);
+    });
+
     return () => clearInterval(id);
   }, []);
 
@@ -41,8 +56,8 @@ export default function Topbar({ onOpenPalette }) {
                 VOOPOO Indonesia
               </div>
               <div className="text-muted text-[13.5px] mt-1">
-                {greeting}, <span className="text-vapor">Han</span>
-                <span className="text-muted-dim"> — Head Creative</span>
+                {greeting}, <span className="text-vapor">{me?.nama || "..."}</span>
+                {me?.role && <span className="text-muted-dim"> — {me.role}</span>}
               </div>
             </div>
           </div>
@@ -60,7 +75,7 @@ export default function Topbar({ onOpenPalette }) {
             {onOpenPalette && (
               <button
                 onClick={onOpenPalette}
-                className="group bg-panel border border-line text-muted px-5 py-3 rounded-xl text-[14.5px] flex items-center gap-3 transition-all duration-200 hover:border-ember hover:text-text hover:glow-ember hover:scale-[1.03]"
+                className="group bg-panel border border-line text-muted px-5 py-3 rounded-xl text-[14.5px] flex items-center gap-3 transition-all duration-200 hover:border-ember hover:text-text hover:glow-ember hover:scale-[1.03] press-effect"
               >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" className="text-muted-dim group-hover:text-ember transition-colors">
                   <circle cx="11" cy="11" r="7" stroke="currentColor" strokeWidth="1.8" />
@@ -71,6 +86,24 @@ export default function Topbar({ onOpenPalette }) {
                   ⌘K
                 </kbd>
               </button>
+            )}
+
+            {me?.is_admin && (
+              <Link
+                href="/admin/kelola-tim"
+                title="Kelola Tim"
+                className="w-11 h-11 flex items-center justify-center bg-panel border border-line rounded-xl text-muted-dim hover:text-ember hover:border-ember transition-colors press-effect"
+              >
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none">
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 005 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019 9c.36.13.68.36.93.66"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </Link>
             )}
 
             <LogoutButton />
