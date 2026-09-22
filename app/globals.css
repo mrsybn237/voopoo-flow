@@ -6,12 +6,23 @@
   --color-panel-raised: #151A20;
   --color-line: #262A30;
   --color-line-soft: #1D2126;
+
   --color-ember: #FFC94A;
   --color-ember-dim: #FFC94A26;
   --color-ember-glow: #FFC94A55;
+
   --color-vapor: #9FB4C7;
   --color-vapor-dim: #9FB4C722;
   --color-vapor-glow: #9FB4C755;
+
+  --color-event: #FF7A6E;
+  --color-event-dim: #FF7A6E26;
+  --color-event-glow: #FF7A6E55;
+
+  --color-metric: #5EEAD4;
+  --color-metric-dim: #5EEAD426;
+  --color-metric-glow: #5EEAD455;
+
   --color-text: #EDEFF2;
   --color-muted: #7C8590;
   --color-muted-dim: #4B525C;
@@ -76,4 +87,20 @@ body {
 
 .glow-vapor {
   box-shadow: 0 0 0 1px var(--color-vapor-glow), 0 0 22px -6px var(--color-vapor-glow);
+}
+
+.glow-event {
+  box-shadow: 0 0 0 1px var(--color-event-glow), 0 0 22px -6px var(--color-event-glow);
+}
+
+.glow-metric {
+  box-shadow: 0 0 0 1px var(--color-metric-glow), 0 0 22px -6px var(--color-metric-glow);
+}
+
+.press-effect {
+  transition: transform 0.12s ease-out;
+}
+
+.press-effect:active {
+  transform: scale(0.96);
 }
