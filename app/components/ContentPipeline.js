@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "../lib/supabase-browser";
 import { formatRelativeDate, deadlineUrgency } from "../lib/dateUtils";
 
 const STATUS_KOLOM = ["Brief", "Produksi", "Review", "Posting"];
@@ -122,11 +124,15 @@ function initials(name) {
 }
 
 export default function ContentPipeline({ content }) {
+  const router = useRouter();
+  const supabase = createClient();
+
   const [search, setSearch] = useState("");
   const [pilarFilter, setPilarFilter] = useState("Semua");
   const [platformFilter, setPlatformFilter] = useState("Semua");
   const [sortBy, setSortBy] = useState("terbaru");
   const [onlyUrgent, setOnlyUrgent] = useState(false);
+  const [movingId, setMovingId] = useState(null);
 
   const pilarOptions = useMemo(
     () => ["Semua", ...new Set(content.map((c) => c.pilar).filter(Boolean))],
@@ -154,6 +160,25 @@ export default function ContentPipeline({ content }) {
     setPilarFilter("Semua");
     setPlatformFilter("Semua");
     setOnlyUrgent(false);
+  }
+
+  async function moveStatus(c, direction) {
+    const currentIndex = STATUS_KOLOM.indexOf(c.status);
+    const newIndex = currentIndex + direction;
+    if (newIndex < 0 || newIndex >= STATUS_KOLOM.length) return;
+
+    setMovingId(c.id);
+    const { error } = await supabase
+      .from("content_plan")
+      .update({ status: STATUS_KOLOM[newIndex] })
+      .eq("id", c.id);
+    setMovingId(null);
+
+    if (error) {
+      alert(`Gagal mindahin status: ${error.message}`);
+      return;
+    }
+    router.refresh();
   }
 
   const filtered = useMemo(() => {
@@ -297,7 +322,7 @@ export default function ContentPipeline({ content }) {
         </div>
       ) : (
         <div key={filterKey} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 animate-fade-in">
-          {STATUS_KOLOM.map((status) => {
+          {STATUS_KOLOM.map((status, statusIndex) => {
             const items = filtered.filter((c) => c.status === status);
             return (
               <div key={status} className="bg-panel border border-line-soft rounded-[10px] p-3.5">
@@ -312,6 +337,10 @@ export default function ContentPipeline({ content }) {
                   {items.map((c) => {
                     const pct = Math.round(((c.views || 0) / maxViews) * 100);
                     const urgency = deadlineUrgency(c.tanggal_posting);
+                    const isMoving = movingId === c.id;
+                    const canMoveLeft = statusIndex > 0;
+                    const canMoveRight = statusIndex < STATUS_KOLOM.length - 1;
+
                     return (
                       <div key={c.id} className="relative group">
                         <Link
@@ -377,6 +406,42 @@ export default function ContentPipeline({ content }) {
                             </div>
                           </div>
                         </Link>
+
+                        <div className="flex items-center justify-between mt-1.5 px-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                          <button
+                            type="button"
+                            disabled={!canMoveLeft || isMoving}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              moveStatus(c, -1);
+                            }}
+                            className="w-6 h-6 rounded-full bg-panel border border-line-soft flex items-center justify-center text-muted-dim hover:text-ember hover:border-ember/40 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                            title={canMoveLeft ? `Pindah ke ${STATUS_KOLOM[statusIndex - 1]}` : ""}
+                          >
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+                              <path d="M15 6l-6 6 6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+
+                          {isMoving && (
+                            <span className="font-mono text-[9.5px] text-muted-dim">Menyimpan...</span>
+                          )}
+
+                          <button
+                            type="button"
+                            disabled={!canMoveRight || isMoving}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              moveStatus(c, 1);
+                            }}
+                            className="w-6 h-6 rounded-full bg-panel border border-line-soft flex items-center justify-center text-muted-dim hover:text-ember hover:border-ember/40 transition-colors disabled:opacity-0 disabled:pointer-events-none"
+                            title={canMoveRight ? `Pindah ke ${STATUS_KOLOM[statusIndex + 1]}` : ""}
+                          >
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none">
+                              <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            </svg>
+                          </button>
+                        </div>
 
                         <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 z-20 opacity-0 scale-95 origin-top transition-all duration-150 group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto">
                           <div className="bg-panel-raised border border-ember/40 glow-ember rounded-xl p-3.5 animate-float-in">
